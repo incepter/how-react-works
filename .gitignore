@@ -1,0 +1,10 @@
+coverage
+build
+node_modules
+stats.json
+dist
+
+npm-debug.log
+.idea
+
+package-lock.json
