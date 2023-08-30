@@ -50,10 +50,28 @@ I am still very far from that.
 This project would explain all the needed pieces to be comfortable with react's
 codebase, not an easy task, but let's dream big and get going.
 
+## Audience and requirements
+
+This blog post series is destined to people that have used React for few years,
+or that are willing to contribute to React, or that are curious to know how
+React is written and how its code looks like.
+
+The readers should then be familiar with the following React concepts:
+- Component types
+- Component lifecycle
+- Elements Vs Components
+- Effects, hooks
+- Commit
+- Reconciliation
+And so on.
+
+Understanding the requirements will be automatic if you've used React few years,
+and this will help shorten these blog posts and focus on the main goal.
+
 ## How will it go
 
-Each section would contain a lot of links towards react's codebase and
-code snippets of either real react code or a simplified version.
+Each section would contain a lot of links towards React's codebase and
+code snippets of either real react code or a simplified versions.
 
 I will try to follow the natural react order, ie: I will start by explaining
 the very first steps that we are told to do to use React: `createRoot`,
