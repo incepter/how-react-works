@@ -12,12 +12,13 @@ under the hood.
 This is a deep dive into react internals with the goal to explain the concepts
 put into making react the tool you've been using for a couple of years now.
 
-This is not a course or tutorial on how to use react, but more of an explanation
-of react's codebase. You don't need to know any of this to be a creative and
-successful react developer.
+This is not a course or tutorial on how to use React, but more of an explanation
+of React codebase. You don't need to know any of this to be a creative and
+successful React developer.
 
-The goal of this project is to explain how all the these things are made into
-react, the concepts used and the important "code paths" to mention:
+The goal of this project is to explain how all the these things are made,
+the concepts used and the important "code paths" to mention. We will go through
+the following list:
 
 - How createRoot() works
 - How root.render() works
@@ -43,11 +44,10 @@ My theory is that this list can be made by different people initiatives.
 
 ## Motivations
 
-Well, the react codebase is surely intimidating and you will be overwhelmed
-each time you visit it. I struggled years trying to understand it a little, and
-I am still very far from that.
+The React codebase is surely intimidating, and you will be overwhelmed
+each time you visit it.
 
-This project would explain all the needed pieces to be comfortable with react's
+This project would explain all the needed pieces to be comfortable with React
 codebase, not an easy task, but let's dream big and get going.
 
 ## Audience and requirements
@@ -68,14 +68,22 @@ And so on.
 Understanding the requirements will be automatic if you've used React few years,
 and this will help shorten these blog posts and focus on the main goal.
 
+Moreover, if you are looking for React tutorials and content, here is my
+recommendation:
+
+- [The new React docs](https://react.dev/) are perfect and cover all
+  the `official` information.
+- [Kent's React course](https://egghead.io/lessons/react-a-beginners-guide-to-react-introduction)
+- [Dan's blog](https://overreacted.io/)
+- [Create your own React](https://pomb.us/build-your-own-react/) by Pombo
+
+
 ## How will it go
 
-Each section would contain a lot of links towards React's codebase and
+Each section would contain a lot of links towards React codebase and
 code snippets of either real react code or a simplified versions.
 
-I will try to follow the natural react order, ie: I will start by explaining
+We will follow the natural react order, ie: I will start by explaining
 the very first steps that we are told to do to use React: `createRoot`,
 then the `root.render` function. Then will follow with what is done during
 render, effects...
-
-
