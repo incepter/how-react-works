@@ -44,7 +44,7 @@ My theory is that this list can be made by different people initiatives.
 
 _This is an ongoing project and many sections are either empty or are not added
 yet. The goal is to have a newsletter that would notify you (if you want!) when
-new context drops. Until then, and I hate to say it, you can follow me on
+new content drops. Until then, and I hate to say it, you can follow me on
 [Twitter (X)](https://twitter.com/incepterr) to get notified when I drop
 something new._
 
