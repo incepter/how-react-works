@@ -43,29 +43,26 @@ if (options) {
 
 export const S_02_ROOT_RENDER_1 = [
   {
-    statement: `// 1\nconst current = container.current;`
+    statement: `const current = container.current;`
   },
   {
-    statement: `// 2\nconst lane = requestUpdateLane(current);`
+    statement: `const lane = requestUpdateLane(current);`
   },
   {
-    statement: `// 3\ncontainer.context = getContextForSubtree(parentComponent);`
-  },
-  {
-    statement: `// 4\nconst update = createUpdate(lane);
+    statement: `const update = createUpdate(lane);
 update.payload = {element};
 update.callback = callback;`
   },
   {
-    statement: `// 5\nconst root = enqueueUpdate(current, update, lane);`
+    statement: `const root = enqueueUpdate(current, update, lane);`
   },
   {
-    statement: `// 6\nscheduleUpdateOnFiber(root, current, lane);`,
+    statement: `scheduleUpdateOnFiber(root, current, lane);`,
     isAsync: true,
     asyncCallback: `processRootScheduleInMicrotask(root);`,
   },
   {
-    statement: `// 7\nentangleTransitions(root, current, lane);`
+    statement: `entangleTransitions(root, current, lane);`
   },
 ];
 
