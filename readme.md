@@ -1,6 +1,14 @@
-## Note to initial viewers & collaborators
+# How React Works
 
-Hey guys, thanks for being interested in this project.
+This is a deep dive into react internals and how its code is written.
+We will see the concepts used, the key code-paths and the mysteries behind React.
+
+This is a work in progress and far from being finished. You can [follow me on X](https://twitter.com/incepterr)
+to be notified by the updates while waiting for a newsletter or other format.
+
+This project can be found on [GitHub pages](https://incepter.github.io/how-react-works/).
+
+## Note to initial viewers & collaborators
 
 So the purpose of this project is to dive into the implementation details of
 React and explain how things works. It is not actual coding with more of a
