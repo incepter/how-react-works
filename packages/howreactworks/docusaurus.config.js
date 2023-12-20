@@ -62,7 +62,8 @@ const config = {
       announcementBar: {
         id: 'support_palestine',
         content:
-          '<div>Free Palestine 🇵🇸</div><p>We stand with the People of Palestine! We stand for Justice, Human Rights and Freedom!</p>',
+          '<div>Free Palestine <img src="https://flagcdn.com/ps.svg" width="30" alt="Palestine"></div><p>We stand with the People of Palestine! We stand for Justice, Human Rights and Freedom!</p>',
+
         backgroundColor: '#242526',
         textColor: '#fff',
         isCloseable: false,
