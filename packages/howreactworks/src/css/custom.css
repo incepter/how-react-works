@@ -28,3 +28,54 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Announcement banner */
+
+:root {
+  --docusaurus-announcement-bar-height: auto !important;
+}
+
+div[class*="announcementBar"] {
+  padding: 4px 8px;
+}
+
+div[class*="announcementBar"][role="banner"] button.close svg {
+  fill: white;
+}
+
+div[class*="announcementBarContent"] div {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: bold;
+}
+
+div[class*="announcementBarContent"] p {
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 0;
+  opacity: 0.6;
+}
+
+@media only screen and (max-width: 768px) {
+  div[class*="announcementBarContent"] div {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  div[class*="announcementBarContent"] p {
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  div[class*="announcementBarContent"] div {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  div[class*="announcementBarContent"] p {
+    font-size: 12px;
+    line-height: 16px;
+  }
+}

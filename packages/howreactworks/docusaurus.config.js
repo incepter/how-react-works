@@ -59,6 +59,14 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      announcementBar: {
+        id: 'support_palestine',
+        content:
+          '<div>Free Palestine 🇵🇸</div><p>We stand with the People of Palestine! We stand for Justice, Human Rights and Freedom!</p>',
+        backgroundColor: '#242526',
+        textColor: '#fff',
+        isCloseable: false,
+      },
       // Replace with your project's social card
       image: 'img/how-react-works.png',
       navbar: {
