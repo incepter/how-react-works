@@ -82,6 +82,7 @@ recommendation:
 - [Kent's React course](https://egghead.io/lessons/react-a-beginners-guide-to-react-introduction)
 - [Dan's blog](https://overreacted.io/)
 - [Create your own React](https://pomb.us/build-your-own-react/) by Pombo
+- [joshw comeau](https://www.joshwcomeau.com/tutorials/react/)
 
 
 ## How will it go
