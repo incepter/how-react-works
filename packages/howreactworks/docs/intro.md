@@ -2,94 +2,60 @@
 sidebar_position: 1
 ---
 
-# Introduction
+# はじめに
 
-Hi, and welcome to this blog post series aiming to explain how react works
-under the hood.
+React の内部動作を解説するブログシリーズへようこそ。
 
-## What is this
+## このドキュメントについて
 
-This is a deep dive into react internals with the goal to explain the concepts
-put into making react the tool you've been using for a couple of years now.
+これは React のコードベースを深掘りし、皆さんが何年も使ってきた React がどのように作られているのかを解説するものです。React の使い方を学ぶチュートリアルではなく、内部実装に焦点を当てています。これらの知識がなくても立派な React 開発者になれますが、内部の仕組みを知りたい方のために作成しました。
 
-This is not a course or tutorial on how to use React, but more of an explanation
-of React codebase. You don't need to know any of this to be a creative and
-successful React developer.
+以下のトピックをカバーする予定です：
 
-The goal of this project is to explain how all the these things are made,
-the concepts used and the important "code paths" to mention. We will go through
-the following list:
+- createRoot()の仕組み
+- root.render()の仕組み
+- work loop の動作
+- work tags の役割
+- Hooks の実装
+- 各 Hook の詳細
+- Effect の処理フロー
+- scheduler（スケジューラ）の動作
+- Suspense のメカニズム
+- StrictMode の役割
+- 機能フラグの使い方
+- バンドリングプロセス
+- レンダラーの仕組み
+- Dispatcher の役割
+- サーバーサイドレンダリング
+- RSC（React Server Components）の実装
+- Float/Fizz の技術
+- その他...
 
-- How createRoot() works
-- How root.render() works
-- How the work loop works
-- How work tags work
-- How Hooks work
-- How each hook works
-- How effects work
-- How the scheduler works
-- How suspense works
-- How StrictMode works
-- How feature flags work
-- How bundling works
-- How renderers work
-- How Dispatcher works
-- How Server side rendering work
-- How RSC works
-- How Float/Fizz work
-- And so on...
+これは継続的なプロジェクトで、新しいコンテンツはニュースレターまたは[Twitter（X）](https://twitter.com/incepterr)で通知されます。
 
-This is an ambitious list of what this blog post series may achieve over time.
-My theory is that this list can be made by different people initiatives.
+## 目的
 
-_This is an ongoing project and many sections are either empty or are not added
-yet. The goal is to have a newsletter that would notify you (if you want!) when
-new content drops. Until then, and I hate to say it, you can follow me on
-[Twitter (X)](https://twitter.com/incepterr) to get notified when I drop
-something new._
+React のコードベースは複雑で圧倒されがちですが、このシリーズを通じて主要な概念と重要なコードパスを理解できるようにすることが目標です。
 
-## Motivations
+## 対象読者と前提知識
 
-The React codebase is surely intimidating, and you will be overwhelmed
-each time you visit it.
+React を数年使った経験がある方、React に貢献したい方、内部実装に興味がある方向けです。以下の概念を理解していることが前提です：
 
-This project would explain all the needed pieces to be comfortable with React
-codebase, not an easy task, but let's dream big and get going.
+- コンポーネントの種類
+- コンポーネントのライフサイクル
+- Element と Component の違い
+- Effect と Hook
+- Commit 処理
+- Reconciliation（比較アルゴリズム）
+- など
 
-## Audience and requirements
+React 学習リソースとして以下を推奨します：
 
-This blog post series is destined to people that have used React for few years,
-or that are willing to contribute to React, or that are curious to know how
-React is written and how its code looks like.
+- [React 公式ドキュメント](https://react.dev/)
+- [Kent の React コース](https://egghead.io/lessons/react-a-beginners-guide-to-react-introduction)
+- [Dan のブログ](https://overreacted.io/)
+- [自作 React 実装ガイド](https://pomb.us/build-your-own-react/)
 
-The readers should then be familiar with the following React concepts:
-- Component types
-- Component lifecycle
-- Elements Vs Components
-- Effects, hooks
-- Commit
-- Reconciliation
-And so on.
+## 解説の進め方
 
-Understanding the requirements will be automatic if you've used React few years,
-and this will help shorten these blog posts and focus on the main goal.
-
-Moreover, if you are looking for React tutorials and content, here is my
-recommendation:
-
-- [The new React docs](https://react.dev/) are perfect and cover all
-  the `official` information.
-- [Kent's React course](https://egghead.io/lessons/react-a-beginners-guide-to-react-introduction)
-- [Dan's blog](https://overreacted.io/)
-- [Create your own React](https://pomb.us/build-your-own-react/) by Pombo
-
-
-## How will it go
-
-Each section would contain a lot of links towards React codebase and
-code snippets of either real react code or a simplified versions.
-
-We will follow the natural react order, ie: I will start by explaining
-the very first steps that we are told to do to use React: `createRoot`,
-then the `root.render` function. Then will follow with what is done during
-render, effects...
+各セクションでは React のコードベースへのリンクや簡略化したコード例を使用します。React の自然な処理順序（createRoot → root.render → レンダリング処理 → Effect...）に沿って解説します。
