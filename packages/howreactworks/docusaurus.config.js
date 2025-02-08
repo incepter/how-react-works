@@ -1,55 +1,55 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require("prism-react-renderer/themes/github");
+const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'How React Works',
-  tagline: 'Deep dive into React internals',
-  favicon: 'img/favicon.ico',
+  title: "How React Works (日本語訳)",
+  tagline: "Deep dive into React internals",
+  favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: 'https://incepter.github.io',
+  url: "https://calloc134.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/how-react-works/',
+  baseUrl: "/how-react-works/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'incepter', // Usually your GitHub org/user name.
-  projectName: 'how-react-works', // Usually your repo name.
+  organizationName: "incepter", // Usually your GitHub org/user name.
+  projectName: "how-react-works", // Usually your repo name.
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/incepter/how-react-works/edit/main/packages/howreactworks',
+            "https://github.com/incepter/how-react-works/edit/main/packages/howreactworks",
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
 
         gtag: {
-          trackingID: 'G-9TZJWQ2XDV',
+          trackingID: "G-9TZJWQ2XDV",
           anonymizeIP: true,
         },
       }),
@@ -60,63 +60,63 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       announcementBar: {
-        id: 'support_palestine',
+        id: "support_palestine",
         content:
           '<div>Free Palestine <img src="https://flagcdn.com/ps.svg" width="30" alt="Palestine"></div><p>We stand with the People of Palestine! We stand for Justice, Human Rights and Freedom!</p>',
 
-        backgroundColor: '#242526',
-        textColor: '#fff',
+        backgroundColor: "#242526",
+        textColor: "#fff",
         isCloseable: false,
       },
       // Replace with your project's social card
-      image: 'img/how-react-works.png',
+      image: "img/how-react-works.png",
       navbar: {
-        title: 'How react works',
+        title: "How react works",
         logo: {
-          alt: 'React logo',
-          src: 'img/logo.svg',
+          alt: "React logo",
+          src: "img/logo.svg",
         },
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'reactSidebar',
-            position: 'left',
-            label: 'Start reading',
+            type: "docSidebar",
+            sidebarId: "reactSidebar",
+            position: "left",
+            label: "Start reading",
           },
           {
-            href: 'https://github.com/incepter/how-react-works',
-            label: 'GitHub',
-            position: 'right',
+            href: "https://github.com/incepter/how-react-works",
+            label: "GitHub",
+            position: "right",
           },
         ],
       },
       footer: {
-        style: 'dark',
+        style: "dark",
         links: [
           {
-            title: 'Docs',
+            title: "Docs",
             items: [
               {
-                label: 'Start reading',
-                to: '/docs/intro',
+                label: "Start reading",
+                to: "/docs/intro",
               },
             ],
           },
           {
-            title: 'Reach out',
+            title: "Reach out",
             items: [
               {
-                label: 'Twitter',
-                href: 'https://twitter.com/incepterr',
+                label: "Twitter",
+                href: "https://twitter.com/incepterr",
               },
             ],
           },
           {
-            title: 'More',
+            title: "More",
             items: [
               {
-                label: 'GitHub',
-                href: 'https://github.com/incepter/how-react-works',
+                label: "GitHub",
+                href: "https://github.com/incepter/how-react-works",
               },
             ],
           },
