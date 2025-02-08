@@ -18,7 +18,7 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "incepter", // Usually your GitHub org/user name.
+  organizationName: "calloc134", // Usually your GitHub org/user name.
   projectName: "how-react-works", // Usually your repo name.
 
   onBrokenLinks: "throw",
@@ -42,7 +42,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            "https://github.com/incepter/how-react-works/edit/main/packages/howreactworks",
+            "https://github.com/calloc134/how-react-works/edit/main/packages/howreactworks",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -84,7 +84,7 @@ const config = {
             label: "Start reading",
           },
           {
-            href: "https://github.com/incepter/how-react-works",
+            href: "https://github.com/calloc134/how-react-works",
             label: "GitHub",
             position: "right",
           },
@@ -107,7 +107,7 @@ const config = {
             items: [
               {
                 label: "Twitter",
-                href: "https://twitter.com/incepterr",
+                href: "https://twitter.com/calloc134r",
               },
             ],
           },
@@ -116,12 +116,12 @@ const config = {
             items: [
               {
                 label: "GitHub",
-                href: "https://github.com/incepter/how-react-works",
+                href: "https://github.com/calloc134/how-react-works",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} incepter. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} calloc134. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
