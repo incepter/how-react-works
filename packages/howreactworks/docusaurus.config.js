@@ -107,7 +107,7 @@ const config = {
             items: [
               {
                 label: "Twitter",
-                href: "https://twitter.com/calloc134r",
+                href: "https://twitter.com/calloc134",
               },
             ],
           },
