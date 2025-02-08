@@ -25,9 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4 # v2 -> v4
       # - uses: pnpm/action-setup@v2.2.4 # 特定のバージョンを指定せず、最新版を使うことを推奨
-      - uses: pnpm/action-setup@v3 # v2 -> v3 バージョン指定方法の変更に対応
+      - uses: pnpm/action-setup@v3
         with:
-          # version: 8.6.3 # バージョン指定を削除
+          version: 8
           run_install: false # pnpm installを別途実行するため不要
 
       - name: Setup Node.js environment
