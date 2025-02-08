@@ -35,12 +35,11 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
-        #   cache-dependency-path: "packages/howreactworks/docs/pnpm-lock.yaml"
+          cache-dependency-path: "pnpm-lock.yaml"
 
       # 依存関係のインストール
       - name: install dependencies
         run: pnpm install --frozen-lockfile
-        working-directory: packages/howreactworks/docs
 
       - name: Build
         run: pnpm run build
