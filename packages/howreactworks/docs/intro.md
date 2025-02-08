@@ -59,3 +59,7 @@ React 学習リソースとして以下を推奨します：
 ## 解説の進め方
 
 各セクションでは React のコードベースへのリンクや簡略化したコード例を使用します。React の自然な処理順序（createRoot → root.render → レンダリング処理 → Effect...）に沿って解説します。
+
+## 元記事へのリンク
+
+[How React Works](https://incepter.github.io/how-react-works/)
