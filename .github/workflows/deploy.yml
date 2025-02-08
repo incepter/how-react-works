@@ -52,8 +52,8 @@ jobs:
 
   # Deployment job
   deploy:
-    # masterブランチのときのみ実行する
-    if: github.ref == 'refs/heads/master'
+    # mainブランチのときのみ実行する
+    if: github.ref == 'refs/heads/main'
     # 必要な権限を付与する
     permissions:
       pages: write # to deploy to Pages
