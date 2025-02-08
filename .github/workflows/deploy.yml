@@ -4,7 +4,7 @@ name: Deploy Docusaurus with GitHub Pages dependencies preinstalled
 on:
   # masterブランチへのpushに対応する
   push:
-    branches: ["master"]
+    branches: ["main"]
   # プルリクエストでのCIに対応する
   pull_request:
     types: [opened, synchronize]
