@@ -40,6 +40,7 @@ jobs:
       # 依存関係のインストール
       - name: install dependencies
         run: pnpm install --frozen-lockfile
+        working-directory: packages/howreactworks/docs
 
       - name: Build
         run: pnpm run build
