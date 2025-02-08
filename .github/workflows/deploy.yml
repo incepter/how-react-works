@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
-          cache-dependency-path: "packages/howreactworks/docs/pnpm-lock.yaml"
+        #   cache-dependency-path: "packages/howreactworks/docs/pnpm-lock.yaml"
 
       # 依存関係のインストール
       - name: install dependencies
