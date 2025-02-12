@@ -1,0 +1,402 @@
+---
+title: React の初期マウントは内部でどのように行われるのでしょうか？
+---
+
+:::caution
+React のバージョン 18.2.0 をベースにしています。新しいバージョンでは実装が変更されている可能性があります。
+:::
+
+[React の内部構造の概要](link-to-overview)では、React が最小限の DOM 更新を計算しコミットフェーズで適用するために、内部的に Fiber Tree と呼ばれるツリー構造を使用していることを簡単に説明しました。この記事では、React がどのように初期マウント（初回レンダー）を行うのかを詳しく解説します。具体的には、以下のコードから DOM がどのように構築されるのかを理解します。
+
+## 1. Fiber アーキテクチャの概要
+
+![Fiber Architecture](https://jser.dev/static/fiber-brief-intro-light.png)
+
+Fiber は React がアプリケーションの状態を内部で表現するためのアーキテクチャです。FiberRootNode と様々な FiberNode から構成されるツリー構造で、HostComponent と呼ばれるタイプの FiberNode は対応する DOM ノードを持ちます。
+
+React ランタイムは Fiber Tree の維持と更新に注力し、最小限の更新でホスト DOM との同期を図ります。
+
+## 1.1 FiberRootNode
+
+FiberRootNode は React アプリ全体のルートとして機能する特別なノードで、アプリ全体のメタ情報を保持します。`current`プロパティは実際の Fiber Tree を指しており、新しい Fiber Tree が構築されるたびに`current`が新しい`HostRoot`を指すように更新されます。
+
+## 1.2 FiberNode
+
+FiberNode は FiberRootNode 以外のすべてのノードを指し、主要なプロパティは以下の通りです:
+
+1. `tag`: FiberNode のサブタイプを区別します（例: FunctionComponent, HostRoot, ContextConsumer, MemoComponent, SuspenseComponent など）
+2. `stateNode`: バッキングデータへの参照（HostComponent の場合、実際の DOM ノードを指します）
+3. `child`, `sibling`, `return`: ツリー構造を形成するためのポインタ
+4. `elementType`: コンポーネント関数または HTML タグ名
+5. `flags`: コミットフェーズで適用する更新を指示するフラグ（`subtreeFlags`は子孫ノード用）
+6. `lanes`: 保留中の更新の優先度を表す（`childLanes`は子孫ノード用）
+7. `memoizedState`: 重要な状態データを保持（FunctionComponent の場合 hooks を指します）
+
+## 2. Initial mount in Trigger phase
+
+<!-- `createRoot()` creates React root which also has a dummy HostRoot FiberNode created as `current`. -->
+
+`createRoot()` は React ルートを作成し、`current`としてダミーの HostRoot FiberNode を作成します。
+
+```javascript
+export function createRoot(
+  container: Element | Document | DocumentFragment,
+  options?: CreateRootOptions
+): RootType {
+  let isStrictMode = false;
+  let concurrentUpdatesByDefaultOverride = false;
+  let identifierPrefix = "";
+  let onRecoverableError = defaultOnRecoverableError;
+  let transitionCallbacks = null;
+
+  // <FiberRootNodeを返却します>
+  const root = createContainer(
+    container,
+    ConcurrentRoot,
+    null,
+    isStrictMode,
+    concurrentUpdatesByDefaultOverride,
+    identifierPrefix,
+    onRecoverableError,
+    transitionCallbacks
+  );
+  markContainerAsRoot(root.current, container);
+  Dispatcher.current = ReactDOMClientDispatcher;
+  const rootContainerElement: Document | Element | DocumentFragment =
+    container.nodeType === COMMENT_NODE
+      ? (container.parentNode: any)
+      : container;
+  listenToAllSupportedEvents(rootContainerElement);
+  return new ReactDOMRoot(root);
+}
+export function createContainer(
+  containerInfo: Container,
+  tag: RootTag,
+  hydrationCallbacks: null | SuspenseHydrationCallbacks,
+  isStrictMode: boolean,
+  concurrentUpdatesByDefaultOverride: null | boolean,
+  identifierPrefix: string,
+  onRecoverableError: (error: mixed) => void,
+  transitionCallbacks: null | TransitionTracingCallbacks
+): OpaqueRoot {
+  const hydrate = false;
+  const initialChildren = null;
+  return createFiberRoot(
+    containerInfo,
+    tag,
+    hydrate,
+    initialChildren,
+    hydrationCallbacks,
+    isStrictMode,
+    concurrentUpdatesByDefaultOverride,
+    identifierPrefix,
+    onRecoverableError,
+    transitionCallbacks
+  );
+}
+export function createFiberRoot(
+  containerInfo: Container,
+  tag: RootTag,
+  hydrate: boolean,
+  initialChildren: ReactNodeList,
+  hydrationCallbacks: null | SuspenseHydrationCallbacks,
+  isStrictMode: boolean,
+  concurrentUpdatesByDefaultOverride: null | boolean,
+  identifierPrefix: string,
+  onRecoverableError: null | ((error: mixed) => void),
+  transitionCallbacks: null | TransitionTracingCallbacks
+): FiberRoot {
+  // $FlowFixMe[invalid-constructor] Flow no longer supports calling new on functions
+  const root: FiberRoot = (new FiberRootNode(
+    containerInfo,
+    tag,
+    hydrate,
+    identifierPrefix,
+    onRecoverableError
+  ): any);
+  // Cyclic construction. This cheats the type system right now because
+  // stateNode is any.
+  const uninitializedFiber = createHostRootFiber(
+    tag,
+    isStrictMode,
+    concurrentUpdatesByDefaultOverride
+  );
+  // < A FiberNode of HostRoot is created and assigned as current of React root>
+  // <HostRootのFiberNodeが作成され、Reactルートのcurrentとして割り当てられます>
+  root.current = uninitializedFiber;
+  uninitializedFiber.stateNode = root;
+
+  // ...
+  initializeUpdateQueue(uninitializedFiber);
+  return root;
+}
+```
+
+`root.render()` schedules update on HostRoot. The argument of element is stored in update payload.
+
+```javascript
+function ReactDOMRoot(internalRoot: FiberRoot) {
+  this._internalRoot = internalRoot;
+}
+ReactDOMHydrationRoot.prototype.render = ReactDOMRoot.prototype.render =
+  function (children: ReactNodeList): void {
+    const root = this._internalRoot;
+    if (root === null) {
+      throw new Error("Cannot update an unmounted root.");
+    }
+    updateContainer(children, root, null, null);
+  };
+export function updateContainer(
+  element: ReactNodeList,
+  container: OpaqueRoot,
+  parentComponent: ?React$Component<any, any>,
+  callback: ?Function
+): Lane {
+  const current = container.current;
+  const lane = requestUpdateLane(current);
+
+  if (enableSchedulingProfiler) {
+    markRenderScheduled(lane);
+  }
+
+  const context = getContextForSubtree(parentComponent);
+  if (container.context === null) {
+    container.context = context;
+  } else {
+    container.pendingContext = context;
+  }
+
+  const update = createUpdate(lane);
+  // Caution: React DevTools currently depends on this property
+  // being called "element".
+  // <render()の引数はupdateのpayloadに格納されます>
+  update.payload = { element };
+
+  // <Then the update is enqueued. We won't dive into how this is done
+  // Just remember that the update is waiting to be processed.>
+  const root = enqueueUpdate(current, update, lane);
+
+  if (root !== null) {
+    scheduleUpdateOnFiber(root, current, lane);
+    entangleTransitions(root, current, lane);
+  }
+
+  return lane;
+}
+```
+
+## 3. レンダーフェーズにおける初期マウント
+
+### 3.1 `performConcurrentWorkOnRoot()`
+
+[React の内部構造の概要](link-to-overview)で説明したように、`performConcurrentWorkOnRoot()`は初期マウントと再レンダーの両方でレンダリングを開始するエントリーポイントです。
+
+注意すべき点は、`concurrent`という名前が付いていても、必要に応じて内部的に`sync`モードにフォールバックすることです。初期マウントは DefaultLane がブロッキングレーンであるため、そのケースの 1 つです。
+
+```javascript
+function performConcurrentWorkOnRoot(root, didTimeout) {
+  // Determine the next lanes to work on, using the fields stored
+  // on the root.
+  let lanes = getNextLanes(
+    root,
+    root === workInProgressRoot ? workInProgressRootRenderLanes : NoLanes
+  );
+  // ...
+
+  // We disable time-slicing in some cases: if the work has been CPU-bound
+  // for too long ("expired" work, to prevent starvation), or we're in
+  // sync-updates-by-default mode.
+  // TODO: We only check `didTimeout` defensively, to account for a Scheduler
+  // bug we're still investigating. Once the bug in Scheduler is fixed,
+  // we can remove this, since we track expiration ourselves.
+  const shouldTimeSlice =
+    includesBlockingLane(root, lanes) &&
+    !includesExpiredLane(root, lanes) &&
+    (disableSchedulerTimeoutInWorkLoop || !didTimeout);
+  let exitStatus = shouldTimeSlice
+    ? renderRootConcurrent(root, lanes)
+    : renderRootSync(root, lanes);
+  // ...
+}
+export function includesBlockingLane(root: FiberRoot, lanes: Lanes) {
+  // <ブロッキングとは、重要であり中断されてはならないことを意味します。>
+  const SyncDefaultLanes =
+    InputContinuousHydrationLane |
+    InputContinuousLane |
+    DefaultHydrationLane |
+    DefaultLane;
+  // <DefaultLane はブロッキングレーンです>
+  return (lanes & SyncDefaultLanes) !== NoLanes;
+}
+```
+
+> ℹ️ Lanes について詳しく知りたい場合は、[React における Lanes とは？](link-to-lanes)を参照してください。
+
+上記のコードから、初期マウントでは実際にはコンカレントモードが使用されていないことがわかります。これは理にかなっています。
+初期マウントでは、できるだけ早く UI を描画することが重要であり、遅延させることは役に立ちません。
+
+### 3.2 `renderRootSync()`
+
+`renderRootSync()` は内部的には単なる while ループです。
+
+```javascript
+function renderRootSync(root: FiberRoot, lanes: Lanes) {
+  const prevExecutionContext = executionContext;
+  executionContext |= RenderContext;
+  const prevDispatcher = pushDispatcher();
+
+  // If the root or lanes have changed, throw out the existing stack
+  // and prepare a fresh one. Otherwise we'll continue where we left off.
+  if (workInProgressRoot !== root || workInProgressRootRenderLanes !== lanes) {
+    if (enableUpdateTracking) {
+      if (isDevToolsPresent) {
+        const memoizedUpdaters = root.memoizedUpdaters;
+        if (memoizedUpdaters.size > 0) {
+          restorePendingUpdaters(root, workInProgressRootRenderLanes);
+          memoizedUpdaters.clear();
+        }
+      }
+    }
+  }
+
+  // At this point, move Fibers that scheduled the upcoming work from the Map to the Set.
+  // If we bailout on this work, we'll move them back (like above).
+  // It's important to move them now in case the work spawns more work at the same priority
+  // That way we can keep the current update and future updates separate.
+  movePendingFibersToMemoized(root, lanes);
+
+  workInProgressTransitions = getTransitionsForLanes(root, lanes);
+  prepareFreshStack(root, lanes);
+
+  do {
+    try {
+      workLoopSync();
+      break;
+    } catch (thrownValue) {
+      handleError(root, thrownValue);
+    }
+  } while (true);
+  resetContextDependencies();
+
+  executionContext = prevExecutionContext;
+  popDispatcher(prevDispatcher);
+
+  // Set this to null to indicate there's no in-progress render.
+  workInProgressRoot = null;
+  workInProgressRootRenderLanes = NoLanes;
+
+  return workInProgressRootExitStatus;
+}
+
+// The work loop is an extremely hot path. Tell Closure not to inline it.
+/** @noinline */
+function workLoopSync() {
+  // Already timed out, so perform work without checking if we need to yield.
+  while (workInProgress !== null) {
+    // <この while ループは、workInProgress が存在する場合、それに対して performUnitOfWork() を繰り返し実行します>
+    performUnitOfWork(workInProgress);
+    // <名前の通り、Fiber Node 1 つに対して作業を行います>
+  }
+}
+```
+
+ここで`workInProgress`の意味を説明する必要があります。React のコードベースでは`current`と`workInProgress`というプレフィックスが至る所で使用されています。React は内部状態を表現するために Fiber Tree を使用しており、更新があるたびに新しいツリーを構築し古いツリーとの差分を取ります。`current`は UI に描画されている現在のバージョンを指し、`workInProgress`は構築中の次期`current`として使用されるバージョンを意味します。
+
+### 3.3 `performUnitOfWork()`
+
+ここでは、React が単一の Fiber Node に対して作業を行い、実行すべき処理があるかどうかを確認します。
+
+このセクションをより理解しやすくするために、まず私のエピソード「[How does React traverse Fiber tree internally](link-to-fiber-tree-traversal)」をチェックすることをお勧めします。
+
+```javascript
+function performUnitOfWork(unitOfWork: Fiber): void {
+  // The current, flushed, state of this fiber is the alternate. Ideally
+  // nothing should rely on this, but relying on it here means that we don't
+  // need an additional field on the work in progress.
+  const current = unitOfWork.alternate;
+  let next;
+  if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
+    startProfilerTimer(unitOfWork);
+    next = beginWork(current, unitOfWork, subtreeRenderLanes);
+    stopProfilerTimerIfRunningAndRecordDelta(unitOfWork, true);
+  } else {
+    next = beginWork(current, unitOfWork, subtreeRenderLanes);
+  }
+  resetCurrentDebugFiberInDEV();
+  unitOfWork.memoizedProps = unitOfWork.pendingProps;
+  if (next === null) {
+    // If this doesn't spawn new work, complete the current work.
+    completeUnitOfWork(unitOfWork);
+  } else {
+    workInProgress = next;
+    // <前述の通り、workLoopSync()は、workInProgress に対して completeUnitOfWork() を繰り返し実行するだけの while ループです。
+    // したがって、ここで workInProgress を代入すると、次に作業する Fiber Node が設定されます。>
+  }
+
+  ReactCurrentOwner.current = null;
+}
+```
+
+`beginWork()` は実際のレンダリングが行われる場所です。
+
+```javascript
+function beginWork(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes
+): Fiber | null {
+  if (current !== null) {
+    // <もし current が null でない場合、つまり初期マウントではない場合>
+    // ...
+  } else {
+    didReceiveUpdate = false;
+    // <それ以外の場合、初期マウントであるため、更新はありません。>
+    // ...
+  }
+
+  switch (workInProgress.tag) {
+    // <異なるタイプの要素を異なる方法で処理します>
+    case IndeterminateComponent: {
+      // <IndeterminateComponent は、まだインスタンス化されていないクラスコンポーネントまたは関数コンポーネントを意味します。レンダリングされると、正しいタグが付けられます。すぐに戻ってきます>
+      return mountIndeterminateComponent(
+        current,
+        workInProgress,
+        workInProgress.type,
+        renderLanes
+      );
+    }
+    case FunctionComponent: {
+      // <私達が書いた関数コンポーネント>
+      const Component = workInProgress.type;
+      const unresolvedProps = workInProgress.pendingProps;
+      const resolvedProps =
+        workInProgress.elementType === Component
+          ? unresolvedProps
+          : resolveDefaultProps(Component, unresolvedProps);
+      return updateFunctionComponent(
+        current,
+        workInProgress,
+        Component,
+        resolvedProps,
+        renderLanes
+      );
+    }
+    case HostRoot:
+      // <FiberRootNode の下の HostRoot です>
+      return updateHostRoot(current, workInProgress, renderLanes);
+    case HostComponent:
+      // <p、div などの固有の HTML タグのことです>
+      return updateHostComponent(current, workInProgress, renderLanes);
+    case HostText:
+      // <テキストノードです>
+      return updateHostText(current, workInProgress);
+    case SuspenseComponent:
+    // ...
+    // <他にもいくつかのタイプがあります>
+  }
+}
+```
+
+では、レンダリングのステップを見ていきましょう。
+
+
